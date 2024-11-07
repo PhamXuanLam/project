@@ -13,7 +13,7 @@ class CustomerController extends Controller
     public function register(CustomerRequest $request) {
         $params = $request->only([
             'username', 'email',
-            'phone', "role"
+            'phone'
         ]);
 
         if(isset($request->password)) {
@@ -25,6 +25,7 @@ class CustomerController extends Controller
         $account = new Account();
         try {
             $account->fill($params);
+            $account->role = "buyer";
             $account->save();
             DB::commit();
             $response["status"] = true;
@@ -44,7 +45,7 @@ class CustomerController extends Controller
     public function update(CustomerRequest $request) {
         $params = $request->only([
             'username', 'email',
-            'phone', "role", "avatar", "address",
+            'phone', "avatar", "address",
         ]);
         $account = Auth::guard('account_api')->user();
 

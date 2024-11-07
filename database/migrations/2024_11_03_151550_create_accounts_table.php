@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone')->uniqid();
             $table->string('avatar')->nullable();
             $table->string("password");
-            $table->string('role');
+            $table->enum('role', ['admin', 'buyer', 'seller', 'delivery']);
             $table->string("address")->nullable();
             $table->rememberToken();
             $table->timestamps();

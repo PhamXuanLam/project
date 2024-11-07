@@ -37,6 +37,8 @@ Route::prefix("/user")->group(function() {
 });
 
 Route::prefix("/category")->group(function() {
-    Route::post("/add",[CategoryController::class, "create"])->middleware("auth:account_api");
-    Route::get("/list",[CategoryController::class, "index"])->middleware("auth:account_api");
+    Route::post("/create",[CategoryController::class, "create"])->middleware("auth:account_api");
+    Route::put("/update:{category_id}",[CategoryController::class, "update"])->middleware("auth:account_api");
+    Route::get("/list",[CategoryController::class, "index"]);   
+    Route::delete("/delete:{category_id}",[CategoryController::class, "delete"])->middleware("auth:account_api");
 });

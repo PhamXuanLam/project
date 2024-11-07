@@ -6,24 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->string("name");
-            $table->string("description")->nullable();
-            $table->integer("parent_id")->nullable();
-            $table->string("image");
+            $table->string('category_id')->primary(); // Khóa chính dạng chuỗi
+            $table->string('name');
+            $table->string('description')->nullable();
+            $table->string('parent_id')->nullable(); // ID của danh mục cha
+            $table->string('image')->nullable();
+            $table->timestamp('expired')->nullable();
             $table->timestamps();
+
+            // Thiết lập khóa ngoại với onDelete cascade
+            $table->foreign('parent_id')
+                  ->references('category_id')
+                  ->on('categories')
+                  ->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('categories');

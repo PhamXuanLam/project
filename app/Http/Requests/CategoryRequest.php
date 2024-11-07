@@ -23,14 +23,16 @@ class CategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $categoryId = $this->route('id');
+        $categoryId = $this->route('category_id');
 
         return [
-            "name" => "required|unique:categories,name," . ($categoryId ?? 'NULL'),
-            'parent_id' => "nullable|exists:categories,id",
+            "category_id" => "required",
+            "name" => "required|unique:categories,name," . ($categoryId ?? 'NULL') . ",category_id",
+            'parent_id' => "nullable|exists:categories,category_id",
             'image' => "nullable",
             "description" => "nullable",
         ];
+
     }
 
     protected function failedValidation(Validator $validator)

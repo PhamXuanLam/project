@@ -35,6 +35,7 @@ class UserController extends Controller
             $user = new User();
             $user->account_id = $account->id;
             $user->fill($params_user);
+            $user->position = $account->role;
             $user->save();
             DB::commit();
             $response["status"] = true;

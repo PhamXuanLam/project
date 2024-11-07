@@ -16,7 +16,7 @@ class User extends Model
      */
     protected $fillable = [
         'account_id', 'description',
-        'unit_name', 'tax_code',
+        'unit_name', 'tax_code', "position",
         'created_at', 'updated_at'
     ];
 

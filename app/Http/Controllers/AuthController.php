@@ -13,7 +13,7 @@ class AuthController extends Controller
         $response = [];
 
         if(Auth::guard('account')->attempt([
-            "username" => $request->username,
+            "email" => $request->email,
             "password" => $request->password
         ])) {
             $account = Auth::guard('account')->user();
