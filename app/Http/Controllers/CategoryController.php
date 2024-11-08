@@ -149,6 +149,103 @@ class CategoryController extends Controller
 
         // Trả về JSON (hoặc sử dụng trong view tuỳ ý)
         return response()->json($categories);
-
     }
+
+    public function list() {
+        DB::beginTransaction();
+        try {
+            Category::whereNotNull('expired')
+            ->where('expired', '<', now()->subDays(30))
+            ->delete(); // Xóa trực tiếp trong cơ sở dữ liệu
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+        }
+
+        $categories = Category::select('category_id', 'name')->get();
+
+        return response()->json($categories);
+    }
+
+    public function active(string $category_id) {
+        $account = Auth::guard('account_api')->user();
+
+        if($account->role != "admin") {
+            return response()->json([
+                "status" => false,
+                "message" => "You do not have permission to create new categories!"
+            ]);
+        }
+        $category = Category::find($category_id);
+        DB::beginTransaction();
+        try {
+            $parentExpired = $category->expired;
+            $category->expired = null;
+            $category->save();
+            foreach($category->children as $child) {
+                if ($child->expired == $parentExpired) {
+                    $child->expired = null;
+                    $child->save();
+                }
+            }
+            DB::commit();
+            $response["status"] = true;
+            $response["message"] = "Activate categories and related categories!";
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("File: ".$e->getFile().'---Line: '.$e->getLine()."---Message: ".$e->getMessage());
+            $response["status"] = false;
+            $response["message"] = "An error occurred.!";
+            $response["error"] = $e->getMessage();
+        }
+
+        return response()->json($response);
+    }
+
+    public function search(Request $request)
+    {
+        // Lấy từ khóa tìm kiếm từ tham số 'keyword'
+        $keyword = $request->input('keyword');
+
+        // Tìm kiếm danh mục theo 'name' hoặc 'id'
+        $categories = Category::where('name', 'LIKE', '%' . $keyword . '%')
+            ->orWhere('category_id', 'LIKE', '%' . $keyword . '%')
+            ->with('parent') // Gọi đến quan hệ 'parent' để lấy tên danh mục cha
+            ->get();
+
+        // Định dạng dữ liệu trả về cho từng danh mục
+        $result = $categories->map(function ($category) {
+            return [
+                'category_id' => $category->category_id,
+                'name' => $category->name,
+                'image_url' => $category->image_url,
+                'description' => $category->description,
+                'parent' => $category->parent ? $category->parent->name : null
+            ];
+        });
+
+        return response()->json($result);
+    }
+
+    public function searchName(Request $request)
+    {
+        // Lấy từ khóa tìm kiếm từ tham số 'keyword'
+        $keyword = $request->input('keyword');
+
+        // Tìm kiếm danh mục theo 'name' hoặc 'category_id'
+        $categories = Category::where('name', 'LIKE', '%' . $keyword . '%')
+            ->orWhere('category_id', 'LIKE', '%' . $keyword . '%')
+            ->get(['category_id', 'name']); // Lấy ra chỉ 'category_id' và 'name'
+
+        // Định dạng dữ liệu trả về cho từng danh mục
+        $result = $categories->map(function ($category) {
+            return [
+                'category_id' => $category->category_id,
+                'name' => $category->name,
+            ];
+        });
+
+        return response()->json($result);
+    }
+
 }
