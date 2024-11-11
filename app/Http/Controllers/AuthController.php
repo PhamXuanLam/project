@@ -20,7 +20,7 @@ class AuthController extends Controller
             $response["status"] = true;
             $response["message"] = "Login successfully!";
             $response["token"] = $account->createToken('myToken')->accessToken;
-            $response["role"] = $account->role;
+            $response["info"] = $account;
         } else {
             $response["status"] = false;
             $response["message"] = "Username or password not correct!";
