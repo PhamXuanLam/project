@@ -4,6 +4,7 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -21,8 +22,14 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerPolicies();
 
-        //
+        // Đặt thời gian sống của Access Token là 1 giờ
+        Passport::tokensExpireIn(now()->addHour());
+
+        // Giữ thời gian sống của Refresh Token (ví dụ: 30 ngày)
+        Passport::refreshTokensExpireIn(now()->addDays(30));
+
+        // Giữ thời gian sống của Personal Access Token (ví dụ: 6 tháng)
+        Passport::personalAccessTokensExpireIn(now()->addMonths(6));
     }
 }
