@@ -13,6 +13,7 @@ class Variant extends Model
     protected $table = "variants";
     protected $primaryKey = 'variant_id'; // Sử dụng variant_id làm khóa chính
     protected $keyType = 'string'; // Khóa chính là chuỗi
+    public $incrementing = false; // Tắt tự động tăng
 
     protected $fillable = [
         'variant_id',

@@ -20,6 +20,8 @@ class Category extends Model
     // Kiểu dữ liệu của khóa chính
     protected $keyType = 'string';
 
+    public $incrementing = false; // Tắt tự động tăng
+
     // Bật quản lý thời gian created_at và updated_at
     public $timestamps = true;
 

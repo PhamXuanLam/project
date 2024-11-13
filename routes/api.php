@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,4 +46,13 @@ Route::prefix("/category")->group(function() {
     Route::get("/search",[CategoryController::class, "search"]);
     Route::get("/search-name",[CategoryController::class, "searchName"]);
     Route::delete("/delete:{category_id}",[CategoryController::class, "delete"])->middleware("auth:account_api");
+});
+
+Route::prefix("/product")->group(function() {
+    Route::post("/create",[ProductController::class, "create"])->middleware("auth:account_api");
+    Route::get("/productsInactive",[ProductController::class, "productsInactive"])->middleware("auth:account_api");
+    Route::get("/productsActive",[ProductController::class, "productsActive"])->middleware("auth:account_api");
+    Route::put("/update:{product_id}",[ProductController::class, "update"])->middleware("auth:account_api");
+    Route::put("/active:{product_id}",[ProductController::class, "active"])->middleware("auth:account_api");
+    Route::delete("/delete:{product_id}",[ProductController::class, "delete"])->middleware("auth:account_api");
 });
