@@ -58,4 +58,5 @@ Route::prefix("/product")->group(function() {
     Route::get("/show:{product_id}",[ProductController::class, "show"]);
     Route::get("/search",[ProductController::class, "search"])->middleware("auth:account_api");
     Route::get("/search-shop:{keyword}",[ProductController::class, "searchByShop"])->middleware("auth:account_api");
+    Route::get("/search-shop",[ProductController::class, "searchProductsOfShop"])->middleware("auth:account_api");
 });

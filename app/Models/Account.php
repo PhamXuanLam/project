@@ -53,4 +53,9 @@ class Account extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'account_id');
     }
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'account_id');
+    }
 }

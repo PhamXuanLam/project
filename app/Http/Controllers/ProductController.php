@@ -306,6 +306,29 @@ class ProductController extends Controller
         ]);
     }
 
+    public function searchProductsOfShop(Request $request) {
+        $account = Auth::guard('account_api')->user();
+        if (!$account || $account->role !== 'seller') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        $user = $account->user; // Quan hệ `Account` -> `User`
+        if (!$user) {
+            return response()->json(['message' => 'User not found for this account'], 404);
+        }
+        $status = $request->status;
+        $keyword = $request->keyword;
+
+        // Lấy danh sách sản phẩm theo điều kiện
+        $products = Product::where('seller_id', $user->id) // seller_id = id ở bảng users
+            ->where('is_approved', $status)
+            ->when($keyword, function ($query, $keyword) {
+                $query->where('product_name', 'like', "%$keyword%");
+            })
+            ->get();
+
+        return response()->json($products);
+    }
+
     public function search(Request $request) {
         $account = Auth::guard('account_api')->user();
 
