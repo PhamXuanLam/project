@@ -29,14 +29,7 @@ class ProductRequest extends FormRequest
             'category_id' => "required|exists:categories,category_id",
             'min_price' => "required",
             'max_price' => "required",
-            'variant_id'  => "required",
-            'variant_name' => "required",
-            'color' => "nullable",
-            'size'=> "nullable",
-            'style'=> "nullable",
-            'material'=> "nullable",
-            'price' => "required",
-            'stock_quantity' => "required",
+            'variant_id' => "nullable", // Để kiểm tra nếu `variant_id` có giá trị
         ];
 
         if ($this->isMethod('post')) { // Kiểm tra nếu là phương thức POST (tạo mới)
@@ -50,6 +43,17 @@ class ProductRequest extends FormRequest
                     }
                 },
             ];
+        }
+        if ($this->input('variant_id')) {
+            $rules = array_merge($rules, [
+                'variant_name' => "required",
+                'color' => "nullable",
+                'size'=> "nullable",
+                'style'=> "nullable",
+                'material'=> "nullable",
+                'price' => "required",
+                'stock_quantity' => "required",
+            ]);
         }
 
         return $rules;

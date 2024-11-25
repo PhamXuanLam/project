@@ -53,6 +53,9 @@ Route::prefix("/product")->group(function() {
     Route::get("/productsInactive",[ProductController::class, "productsInactive"])->middleware("auth:account_api");
     Route::get("/productsActive",[ProductController::class, "productsActive"])->middleware("auth:account_api");
     Route::put("/update:{product_id}",[ProductController::class, "update"])->middleware("auth:account_api");
-    Route::put("/active:{product_id}",[ProductController::class, "active"])->middleware("auth:account_api");
+    Route::put("/status:{product_id}",[ProductController::class, "status"])->middleware("auth:account_api");
     Route::delete("/delete:{product_id}",[ProductController::class, "delete"])->middleware("auth:account_api");
+    Route::get("/show:{product_id}",[ProductController::class, "show"]);
+    Route::get("/search",[ProductController::class, "search"])->middleware("auth:account_api");
+    Route::get("/search-shop:{keyword}",[ProductController::class, "searchByShop"])->middleware("auth:account_api");
 });

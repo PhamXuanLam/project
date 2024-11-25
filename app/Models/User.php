@@ -23,4 +23,9 @@ class User extends Model
     protected $table = "users";
     protected $primaryKey = "id";
     public $timestamps = true;
+    
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'seller_id', 'id');
+    }
 }
