@@ -53,6 +53,6 @@ class UserController extends Controller
     }
 
     public function update() {
-        dd(1);
+        
     }
 }
