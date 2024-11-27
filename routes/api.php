@@ -33,7 +33,7 @@ Route::prefix("/customer")->group(function() {
 });
 
 Route::prefix("/user")->group(function() {
-    Route::post("/register",[UserController::class, "register"]);
+    Route::post("/register:{role?}",[UserController::class, "register"]);
     Route::put("/update", [UserController::class, "update"])->middleware("auth:account_api");
 });
 

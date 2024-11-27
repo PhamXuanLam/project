@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    public function register(UserRequest $request) {
+    public function register(UserRequest $request, string $role = null) {
         $params_account = $request->only([
             'username', 'email', 'avatar',
-            'phone', "role", 'address'
+            'phone', 'address'
         ]);
 
         $params_user = $request->only([
@@ -31,6 +31,10 @@ class UserController extends Controller
         $account = new Account();
         try {
             $account->fill($params_account);
+            if(!$role) {
+                $role = "seller";
+            }
+            $account->role = $role;
             $account->save();
             $user = new User();
             $user->account_id = $account->id;
@@ -52,7 +56,7 @@ class UserController extends Controller
         return response()->json($response);
     }
 
-    public function update() {
+    public function update(UserRequest $request, string $user_id) {
         
     }
 }

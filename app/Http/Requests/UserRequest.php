@@ -29,7 +29,6 @@ class UserRequest extends FormRequest
             "email" => "required|email:rfc,dns|max:100|unique:accounts,email," . Auth::id(),
             "phone" => "required|string|min:10|max:12|unique:accounts,phone," . Auth::id(),
             'avatar' => "nullable",
-            'role'=> "required|string",
             'description' => "nullable",
             'unit_name' => "required",
             "tax_code" => "required",
