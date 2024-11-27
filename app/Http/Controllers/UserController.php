@@ -7,6 +7,7 @@ use App\Models\Account;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
@@ -56,7 +57,39 @@ class UserController extends Controller
         return response()->json($response);
     }
 
-    public function update(UserRequest $request, string $user_id) {
-        
+    public function update(UserRequest $request) {
+        $account = Auth::guard('account_api')->user();
+        $user = User::query()->where("account_id", $account->id);
+        $params_account = $request->only([
+            'username', 'email', 'avatar',
+            'phone', 'address'
+        ]);
+
+        $params_user = $request->only([
+            'description', 'unit_name',
+            'tax_code'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $account->fill($params_account);
+            $account->save();
+            $user = new User();
+            $user->account_id = $account->id;
+            $user->fill($params_user);
+            $user->save();
+            DB::commit();
+            $response["status"] = true;
+            $response["message"] = "Register successfully!";
+            $response["info"] = $account;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("File: ".$e->getFile().'---Line: '.$e->getLine()."---Message: ".$e->getMessage());
+            $response["status"] = false;
+            $response["message"] = "Register failure!";
+            $response["error"] = $e->getMessage();
+        }
+
+        return response()->json($response);
     }
 }
