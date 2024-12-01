@@ -53,6 +53,7 @@ class ProductRequest extends FormRequest
                 'material'=> "nullable",
                 'price' => "required",
                 'stock_quantity' => "required",
+                'is_active' => "nullable"
             ]);
         }
 

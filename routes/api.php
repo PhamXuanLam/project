@@ -42,7 +42,6 @@ Route::prefix("/category")->group(function() {
     Route::put("/update:{category_id}",[CategoryController::class, "update"])->middleware("auth:account_api");
     Route::put("/active:{category_id}",[CategoryController::class, "active"])->middleware("auth:account_api");
     Route::get("/list",[CategoryController::class, "index"]);
-    Route::get("/list-name",[CategoryController::class, "list"]);
     Route::get("/search",[CategoryController::class, "search"]);
     Route::get("/search-name",[CategoryController::class, "searchName"]);
     Route::delete("/delete:{category_id}",[CategoryController::class, "delete"])->middleware("auth:account_api");

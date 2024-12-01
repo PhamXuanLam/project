@@ -135,36 +135,29 @@ class CategoryController extends Controller
             DB::rollBack();
         }
 
-        $categories = Category::select('category_id', 'name', 'description', 'parent_id', 'image', "expired")
-                ->with('parent') // Lấy danh mục cha thông qua quan hệ
-                ->get();
+        $categories = Category::with('children')
+        ->select('category_id', 'name', 'description', 'parent_id', 'image', 'expired')
+        ->get();
+        // Đệ quy để xây dựng cấu trúc cây
+        $structuredCategories = $this->buildCategoryTree($categories);
 
-        $categories = $categories->map(function ($category) {
-            $category->parent_name = $category->parent ? $category->parent->name : null;
-            unset($category->parent_id); // Bỏ trường parent_id nếu không cần thiết
-            unset($category->parent); // Bỏ quan hệ parent nếu không cần thiết
-
-            return $category;
-        });
-
-        // Trả về JSON (hoặc sử dụng trong view tuỳ ý)
-        return response()->json($categories);
+        // Trả về JSON hoặc view
+        return response()->json($structuredCategories);
     }
 
-    public function list() {
-        DB::beginTransaction();
-        try {
-            Category::whereNotNull('expired')
-            ->where('expired', '<', now()->subDays(30))
-            ->delete(); // Xóa trực tiếp trong cơ sở dữ liệu
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
+    private function buildCategoryTree($categories, $parentId = null)
+    {
+        $tree = [];
+        foreach ($categories as $category) {
+            if ($category->parent_id === $parentId) {
+                $children = $this->buildCategoryTree($categories, $category->category_id);
+                if ($children) {
+                    $category->children = $children;
+                }
+                $tree[] = $category;
+            }
         }
-
-        $categories = Category::select('category_id', 'name')->get();
-
-        return response()->json($categories);
+        return $tree;
     }
 
     public function active(string $category_id) {
